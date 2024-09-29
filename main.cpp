@@ -56,11 +56,13 @@ int getCantidadPaises(){
     cantidad = ftell(pFile) / sizeof(Pais);
 
     if(cantidad >= 1){
-        return cantidad;
+      fclose(pFile);
+      return cantidad;
     }
 
+    
     fclose(pFile);
-
+    
     return 0;
 };
 
