@@ -4,10 +4,12 @@
 
 bool paisExiste(char codigoPais[4]);
 int getCantidadPaises();
-void mostrarPaises();
+void listarPaises();
 
 int main(){
 
+ /*   
+    //ACTIVIDAD 1
     char codigo[4];
     bool exists;
 
@@ -21,9 +23,11 @@ int main(){
     } else {
         std::cout << "El pais no existe " << std::endl;
 
-    }
-
+    } */
     std::cout << "La cantidad de paises que hay es " << getCantidadPaises() << std::endl;
+    //actividad 3
+    listarPaises();
+    
     return 0;
 }
 
@@ -78,4 +82,23 @@ bool paisExiste(char codigoPais[4]){
 
 
     return false;
+};
+
+void listarPaises(){
+    FILE *pFile;
+    Pais registro;
+    int res;
+    pFile = fopen("paises.dat", "rb");
+
+    if(pFile == nullptr){
+        std::cout << "No se pudo leer el archivo ";
+        exit(-1);
+    }
+
+    for(int i = 0; i < getCantidadPaises(); i++){
+        res = fread(&registro, sizeof(Pais), 1, pFile);
+        if(res == 1){
+            registro.mostrar();
+        }
+    }
 };
