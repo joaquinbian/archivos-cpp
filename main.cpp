@@ -80,6 +80,8 @@ bool paisExiste(char codigoPais[4]){
 
     }
 
+    fclose(pFile);
+
 
     return false;
 };
@@ -101,4 +103,6 @@ void listarPaises(){
             registro.mostrar();
         }
     }
+
+    fclose(pFile);
 };
