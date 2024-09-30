@@ -7,12 +7,19 @@
 bool paisExiste(char codigoPais[4]);
 bool existeCiudad(int idCiudad);
 int getCantidadPaises();
+int buscarPais(char codPais[4]);
+int buscarCiudad(int codCiudad);
 void listarPaises();
 void agregarPais();
 void cargarPais(Pais &pais);
+void mostrarCiudadesDePais(char codigoPais[4]);
+Pais obtenerPais(int pos);
+Ciudad obtenerCiudad(int pos);
 
 int main(){
-
+    char codigo[4];
+    std::cout << "Ingrese el codigo del pais: ";
+    std::cin >> codigo;
  /*   
     //ACTIVIDAD 1
     char codigo[4];
@@ -32,9 +39,14 @@ int main(){
     std::cout << "La cantidad de paises que hay es " << getCantidadPaises() << std::endl;
     //actividad 3
     //listarPaises();
+
+
     //actividad 2
-    agregarPais();
-    listarPaises();
+    //agregarPais();
+    //listarPaises();
+
+    //actividad 4
+    mostrarCiudadesDePais(codigo);
     
     return 0;
 }
@@ -164,6 +176,7 @@ bool existeCiudad(int idCiudad){
    return false;
 };
 
+
 //enviamos una referencia pq sino crea una copia de un archivo
 void cargarPais(Pais &pais){
     std::string codigo = "";
@@ -213,4 +226,128 @@ void cargarPais(Pais &pais){
     pais.setIndependencia(independencia);
     pais.setExpectativaDeVida(expectativaDeVida);
     pais.setIDCapital(capital);
+};
+
+
+void mostrarCiudadesDePais(char codPais[4]){
+    FILE *pFile;
+    Ciudad ciudad;
+    Pais pais;
+    
+    if(!paisExiste(codPais)){
+        std::cout << "El pais no existe :(" << std::endl;
+        exit(-1);
+    }
+
+    pFile = fopen("ciudades.dat", "rb");
+
+    while(fread(&ciudad, sizeof(Ciudad), 1, pFile) == 1){
+        if(strcmp(ciudad.getIDPais(), codPais) == 0){
+            ciudad.mostrar();
+        }
+    };
+
+
+   int posPais =  buscarPais(codPais);
+   if(posPais >= 0){
+        pais = obtenerPais(posPais);
+        int posCiudadCapital = buscarCiudad(pais.getIDCapital());
+        std::cout<<"la capital del pais es " << obtenerCiudad(posCiudadCapital).getNombre() << std::endl;
+        
+   }
+
+    fclose(pFile);
+
+
+    
+
+
+
+};
+
+
+int buscarPais(char codPais[4]){
+    FILE *pFile;
+    Pais registro;
+    int pos = 0;
+
+
+    pFile = fopen("paises.dat", "rb");
+    if(pFile == nullptr){
+        std::cout<<"No se pudo abrir el archivo paises"<<std::endl;
+        exit(-1);
+    }
+
+    while(fread(&registro, sizeof(Pais), 1, pFile) == 1){
+        if(strcmp(registro.getCodigo(), codPais) == 0){
+            fclose(pFile);
+            return pos;
+        }
+        pos++;
+    }
+
+    fclose(pFile);
+    return -1;
+
+
+};
+
+
+int buscarCiudad(int codCiudad){
+    FILE *pFile;
+    Ciudad registro;
+    int pos = 0;
+
+
+    pFile = fopen("ciudades.dat", "rb");
+    if(pFile == nullptr){
+        std::cout<<"No se pudo abrir el archivo ciudades"<<std::endl;
+        exit(-1);
+    }
+
+    while(fread(&registro, sizeof(Ciudad), 1, pFile) == 1){
+        if(registro.getID() == codCiudad){
+            fclose(pFile);
+            return pos;
+        }
+        pos++;
+    }
+
+    fclose(pFile);
+    return -1;
+
+
+};
+
+
+Pais obtenerPais(int pos){
+    FILE *pFile;
+    Pais registro;
+
+    pFile = fopen("paises.dat", "rb");
+
+    fseek(pFile, pos*sizeof(Pais), SEEK_SET);
+
+    fread(&registro, sizeof(Pais), 1, pFile);
+
+    fclose(pFile);
+
+    return registro;
+    
+};
+
+Ciudad obtenerCiudad(int pos){
+    FILE *pFile;
+    Ciudad registro;
+
+    pFile = fopen("ciudades.dat", "rb");
+
+    fseek(pFile, pos*sizeof(Ciudad), SEEK_SET);
+
+    fread(&registro, sizeof(Ciudad), 1, pFile);
+
+    fclose(pFile);
+
+    return registro;
+    
 };
